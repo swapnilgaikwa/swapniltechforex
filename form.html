@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <style>
+    /* Basic styling for the form */
+    body {
+      width: 100vw;
+     height: 100vh;
+     background: url("./images/img.jpg");
+     background-position: center;
+     background-size: cover;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+    }
+
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      background-color: aquamarine;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .success {
+      color: green;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Registration Form</h2>
+    <form name="registration-form" id="registration-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="city">City</label>
+      <input type="text" id="city" name="city" required>
+
+      <label for="whatsapp">WhatsApp Number</label>
+      <input type="text" id="whatsapp" name="whatsapp" required>
+
+      <input type="submit" value="Submit">
+      
+      <div class="error" id="error-message"></div>
+      <div class="success" id="success-message"></div>
+    </form>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyHeoaU4Ri1uKfrYmUFSYUyKprmhvtVrrsZvjuFL9kjLLYUzvV3M8y5V4VyVrWEZJU/exec';
+    const form = document.forms['registration-form'];
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+
+    // Function to validate mobile number
+    function validateMobile(mobile) {
+      // Basic validation for a 10-digit number (you can change the regex if needed)
+      const mobileRegex = /^[0-9]{10}$/;
+      return mobileRegex.test(mobile);
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      
+      // Clear previous messages
+      errorMessage.textContent = '';
+      successMessage.textContent = '';
+
+      // Get the WhatsApp number from the form
+      const whatsappNumber = form['whatsapp'].value;
+
+      // Validate mobile number
+      if (!validateMobile(whatsappNumber)) {
+        errorMessage.textContent = "Please enter a valid 10-digit mobile number.";
+        return;
+      }
+
+      // Get the current date and time
+      const currentDate = new Date();
+      const dateString = currentDate.toLocaleString();  // Format it to a readable string
+
+      // Add date and time to the form data
+      const formData = new FormData(form);
+      formData.append('date_time', dateString);  // Append current date and time
+
+      // Proceed with form submission if validation is successful
+      fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        successMessage.textContent = "Thank you! Form is successfully submitted.";
+        form.reset(); // Clear the form after submission
+      })
+      .catch(error => {
+        errorMessage.textContent = 'Error: ' + error.message;
+      });
+    });
+  </script>
+
+</body>
+</html>
